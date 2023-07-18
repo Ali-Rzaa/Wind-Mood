@@ -6,9 +6,12 @@
  * @flow strict-local
  */
 
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import Header from './screens/header/Header';
 import React from 'react';
-import type {Node} from 'react';
-import {
+import {Node} from 'react';
+import { 
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -21,12 +24,13 @@ import {
 import {
   Colors,
   DebugInstructions,
-  Header,
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+import Home from './screens/Home';
+import Search from './screens/Search';
 
-const Section = ({children, title}): Node => {
+const Section = ({children, title}) => {
   const isDarkMode = useColorScheme() === 'dark';
   return (
     <View style={styles.sectionContainer}>
@@ -52,6 +56,7 @@ const Section = ({children, title}): Node => {
   );
 };
 
+const Stack = createNativeStackNavigator();
 const App = () => {
   const isDarkMode = useColorScheme() === 'dark';
 
@@ -60,13 +65,18 @@ const App = () => {
   };
 
   return (
+    <NavigationContainer>
+      <Stack.Navigator  screenOptions={{
+          headerShown: false
+      }}>
+        <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen name="Search" component={Search} />
+      </Stack.Navigator>
     <SafeAreaView style={backgroundStyle}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} backgroundColor={"#bfe349"} />
-      <View>
-        <Text>Welcome to Wood Mood!</Text>
-      </View>
+      <StatusBar barStyle={isDarkMode ? 'dark-content' : 'light-content'} backgroundColor={"#7580FF"} />
     </SafeAreaView>
-  );
+    </NavigationContainer>
+  ); 
 };
 
 const styles = StyleSheet.create({
