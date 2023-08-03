@@ -1,84 +1,106 @@
-import React, { useState } from 'react'
-import { StyleSheet, Text, TextInput, Button, FlatList, View, ScrollView } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { StyleSheet, Text, TextInput, Button, FlatList, View, ScrollView, TouchableOpacity, Dimensions, AsyncStorage } from 'react-native'
 import Header from './header/Header'
 
-export default function Search() {
+const Height = Dimensions.get("screen").height;
+ const black = "pink"
+export default function Search({setCityName}) {
   const [city, setCity] = useState('')
   const [cities, setCities] = useState([])
-  const FetchCities = (text)=>{
+  useEffect (() =>{
+      if(!city.trim()){
+        setTimeout(() => {
+          setCities([])
+        }, 500);
+        console.log("empty city")
+      }
+  },[city])
+  const getCities = (text) => {
     fetch(`https://www.ventusky.com/ventusky_mesta.php?q=${text}&lang=en`)
     .then(item=> item.json()) 
-    .then(citydata=>
-      setCities(citydata))
-  }
-  const onSubmit = () => {
+    .then(citydata=>{
+    setCities(citydata)})
+    setCity(text);
   }
   const Item = ({title}) => (
-    <View style={styles.item}>
-      <Text onPress={()=> setCity(title)} style={styles.itemTitle}>{title}</Text>
-    </View>
+    <TouchableOpacity onPress={async ()=>
+      { 
+        await AsyncStorage.setItem('city', title);
+        setCityName(title);
+        setCity(title);
+        setCities([]);
+      }} 
+      style={styles.item}>
+      <Text style={styles.itemTitle}>{title}</Text>
+    </TouchableOpacity>
   );
   return (
-    <ScrollView style={styles.container}>
-        <Header></Header>
-        <Text style={styles.heading}>Check Weather of your city</Text>
-        <TextInput editable value={city} style={styles.inputField} onChangeText={text => FetchCities(text)} placeholderTextColor={'#ffaabb'} placeholder='Enter your city...' variant="outlined" />
-        <FlatList
-          nestedScrollEnabled
-          data={cities}
-          style={styles.list}
-          renderItem={({item}) => <Item title={item.address.city} />}
-          keyExtractor={item => item.address.city}
-        />
-        <Button
-          // onPress={onSubmit}
-          style={styles.checkButton}
-          title="Check"
-          color="#841584"
-          accessibilityLabel="Learn more about this purple button"
-        />
-        <Text style={{color:'black'}}>{city}</Text> 
-    </ScrollView>
+    <View style={styles.container}>
+        <View style={styles.inputContainer}>
+          <View style={styles.inputField}>
+            <TextInput caretHidden={true} cursorColor={"white"} color="white" value={city} onChangeText={text => getCities(text)} placeholderTextColor={'#ffaabb'} placeholder='Enter your city...'/>
+          </View>
+          {cities.length !==0?
+            <ScrollView style={styles.list}>
+              <FlatList
+                scrollEnabled
+                initialNumToRender={0}
+                nestedScrollEnabled
+                data={cities}
+                maxToRenderPerBatch={5}
+                renderItem={({item}) =>
+                <Item title={item.address.city} />
+                }
+                keyExtractor={(item,index) => index}
+              />
+            </ScrollView>
+            :
+            <></>
+          }
+        </View>
+    </View>
   )
 }
 const styles = StyleSheet.create({
   container:{
     color:'black',
+    display: 'flex',
+    flexDirection: 'column',
   },
-  heading:{
-    textAlign:'center',
-    justifyContent: "center",
-    color:'black',
-    fontSize:20,
-    marginVertical:20
+  inputContainer:{
+    position: 'relative',
   },
   inputField:{
     color:'black',
-    marginHorizontal: 20,
-    borderWidth: .2,
+    borderRadius: 10,
+    borderWidth: 0.5,
     borderColor: '#7580FF',
-  },
-  checkButton:{
-    width: '20%',
+    paddingHorizontal: 10,
   },
   list:{
-    marginHorizontal: 50,
     borderColor:'#7580FF',
     borderWidth: .5,
-    height: 300,
-    borderRadius:5,
-    // backgroundColor:'black',
-    // justifyContent: 'center',
-    // alignItems: 'center'
+    top: 50,
+    elevation: 10,
+    display: 'flex',
+    flexDirection: 'row',
+    position: 'absolute',
+    borderRadius: 5,
+    backgroundColor: '#FFFFFF',
+    overflow: 'visible',
+    flexWrap: 'nowrap',
+    width: 160
   },
   item:{
-    paddingVertical:10,
-    paddingHorizontal:20,
+    flexDirection:'row',
+    justifyContent: 'center',
+    alignItems:'center',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
     borderBottomWidth: .3,
-    borderBlockColor: '#7580FF'
+    borderBottomColor: '#7580FF'
   },
   itemTitle:{
     color:'black',
-    
   }
 })

@@ -12,11 +12,14 @@
   "dependencies": {
     "@react-navigation/native": "^6.1.7",
     "@react-navigation/native-stack": "^6.9.13",
+    "native-base": "^3.4.28",
     "react": "18.0.0",
     "react-native": "0.69.1",
+    "react-native-no-lag-text-input": "^1.1.0",
     "react-native-paper": "^5.9.1",
-    "react-native-safe-area-context": "^4.7.1",
+    "react-native-safe-area-context": "^3.3.2",
     "react-native-screens": "^3.22.1",
+    "react-native-svg": "^12.1.1",
     "react-native-vector-icons": "^9.2.0"
   },
   "devDependencies": {

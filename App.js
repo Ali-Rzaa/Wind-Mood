@@ -7,6 +7,7 @@
  */
 
 import { NavigationContainer } from '@react-navigation/native';
+import { NativeBaseProvider } from 'native-base';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Header from './screens/header/Header';
 import React from 'react';
@@ -28,7 +29,6 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 import Home from './screens/Home';
-import Search from './screens/Search';
 
 const Section = ({children, title}) => {
   const isDarkMode = useColorScheme() === 'dark';
@@ -65,17 +65,18 @@ const App = () => {
   };
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator  screenOptions={{
-          headerShown: false
-      }}>
-        <Stack.Screen name="Home" component={Home} />
-        <Stack.Screen name="Search" component={Search} />
-      </Stack.Navigator>
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar barStyle={isDarkMode ? 'dark-content' : 'light-content'} backgroundColor={"#7580FF"} />
-    </SafeAreaView>
-    </NavigationContainer>
+    <NativeBaseProvider>
+      <NavigationContainer>
+        <Stack.Navigator  screenOptions={{
+            headerShown: false
+        }}>
+          <Stack.Screen name="Home" component={Home} />
+        </Stack.Navigator>
+        <SafeAreaView style={backgroundStyle}>
+          <StatusBar barStyle={isDarkMode ? 'dark-content' : 'light-content'} backgroundColor={"#7580FF"} />
+        </SafeAreaView>
+      </NavigationContainer>
+    </NativeBaseProvider>
   ); 
 };
 
